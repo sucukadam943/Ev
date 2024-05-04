@@ -1,5 +1,5 @@
-# Import / İçe Aktarma
-from flask import Flask, render_template
+# İçe Aktarma
+from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
@@ -15,7 +15,6 @@ def result_calculate(size, lights, device):
 @app.route('/')
 def index():
     return render_template('index.html')
-
 # İkinci sayfa
 @app.route('/<size>')
 def lights(size):
@@ -28,7 +27,7 @@ def lights(size):
 @app.route('/<size>/<lights>')
 def electronics(size, lights):
     return render_template(
-                            'electronics.html',
+                            'electronics.html',                           
                             size = size, 
                             lights = lights                           
                            )
@@ -42,4 +41,32 @@ def end(size, lights, device):
                                                     int(device)
                                                     )
                         )
+# Form
+@app.route('/form')
+def form():
+    return render_template('form.html')
+
+#Formun sonuçları
+@app.route('/submit', methods=['POST'])
+def submit_form():
+    # Veri toplama için değişkenleri tanımlayın
+    name = request.form['name']
+    email = request.form.get("email")
+    adress = request.form.get("address")
+    date = request.form.get("date")
+    # Verilerinizi kaydedebilir veya e-posta ile gönderebilirsiniz
+    with open("dosyaadi.txt", "a", encoding="UTF-8") as notdefteri:
+        notdefteri.write(f"isim ={name}\n")
+        notdefteri.write(f"adres ={adress}\n")
+        notdefteri.write(f"email ={email}\n")
+        notdefteri.write(f"tarih ={date}\n")
+        notdefteri.write(f"----------------------\n")
+    return render_template('form_result.html', 
+                           # Değişkenleri buraya yerleştirin
+                           name=name,
+                           email=email,
+                           tarih=date,
+                           adress=adress
+                           )
+
 app.run(debug=True)
